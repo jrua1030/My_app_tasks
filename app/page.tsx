@@ -1,14 +1,10 @@
-// pages/index.tsx
-'use client';
+// src/app/page.tsx
+import LoginForm from "@/components/login";
 
-import Login  from "../components/login";
-
-const HomePage: React.FC = () => {
+export default function LoginPage() {
   return (
-    <div>
-      <Login />
+    <div className="flex items-center justify-center min-h-screen">
+      <LoginForm />
     </div>
   );
-};
-
-export default HomePage;
+}
