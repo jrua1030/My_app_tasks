@@ -1,16 +1,15 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const router = useRouter();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -23,8 +22,13 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!email || !password) {
+      console.error('Email and password are required.');
+      return;
+    }
+
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,8 +38,9 @@ const LoginForm: React.FC = () => {
 
       const data = await response.json();
       if (response.ok) {
+        console.log('Login successful:', data);
         document.cookie = `authToken=${data.token}; path=/`;
-        router.push('/taskManager');
+        window.location.href = '/task_manager';
       } else {
         console.error('Login failed:', data);
       }
@@ -45,31 +50,20 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
+    <Card className="w-full max-w-md">
+      <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>Enter your email and password to access your account.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              value={email}
-              onChange={handleEmailChange}
-            />
+            <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={handleEmailChange} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
+            <Input id="password" type="password" value={password} onChange={handlePasswordChange} />
           </div>
           <CardFooter>
             <Button className="w-full" type="submit">Sign in</Button>
